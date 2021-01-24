@@ -1,9 +1,10 @@
+
 import ballerina/http;
 import ballerina/graphql;
 
 http:Listener httpListener = new(9099);
 
-service graphql:Service /graphql on new graphql:Listener(httpListener) {
+service graphql:Service on graphql:Listener(httpListener) {
 
     resource function get profile(int id) returns Person {
 
