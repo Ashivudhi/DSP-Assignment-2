@@ -45,7 +45,7 @@ type Mutation {
   addVoters(voterID: int, name: string!, gender: [Gender]): Voter
   viewVoter(voterID: int, name: string!, gender: [Gender]): Voter
 }type Mutation {
-  displayCandidate(candidateID: int, name: string!, gender: [Gender]): Voter
+  displayCandidate(voterID: int, name: string!, gender: [Gender]): Voter
 }
 
 listener kafka:Consumer consumer = new (consumerConfigs);
@@ -82,4 +82,14 @@ service kafkaService on consumer {
      }
 
  }
- }
+ }resource function candidates(kafka:Consumer kafkaConsumer, kafka:ConsumerRecord[] records) {
+
+           foreach var kafkaRecord in records{
+               processKafkaRecord(kafkaRecord);
+           }
+
+           var commitResult = kafkaConsumer->commit();
+           if(commitResult is error) {
+               log: printError("Error!", commitResult);
+           }
+       }

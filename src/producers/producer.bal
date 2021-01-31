@@ -178,5 +178,47 @@ if(voterData is fraudelets){
         response.setJsonPayload({"Succesfull!"});
         var responseResult = outboundEP->respond(response);
     }
+    service candidates on httpListener {
+        @http:ResourceConfig{
+            path: "/candidates/{name}"
+        }
+
+        resource function candidates(http:Caller outboundEP, http:Request request){
+            http:Response res = new;
+
+            var payloadJson = request.getJsonPayload();
+
+            if (payloadJson is json) {
+                Candidate|error candidateData = Candidate.constructFrom(payloadJson);
+
+                if (candidateData is candidate) {
+                    // Validate JSON payload
+                    if (candidateData.name == "") {
+                            response.statusCode = 500;
+                            response.setPayload("Error: JSON payload should contain " +
+                            "{name:<string>");
+                    } else {
+                        // Invoke addVoters function to save data in the MySQL database
+                        json ret = viewData(candidateData.name);
+                        response.setPayload("candidates": [
+          {
+            "name: George Paul",
+            "name: Sikeba Johnson",
+            "name: Sophie Maharero",
+            "name: Ross De Almeida",
+            "category": CANDIDATE
+          },
+
+    );
+
+                        response.setPayload(ret);
+                    }
+                }
+            }
+
+        }
+
+    }
+
 
 }
